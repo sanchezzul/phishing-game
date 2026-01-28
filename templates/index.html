@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detecta el Correo Falso</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detecta el Correo Falso</h1>
+
+        <p class="progreso">Correo {{ numero }} de {{ total }}</p>
+
+        <div class="mensaje">
+            {{ correo.mensaje }}
+        </div>
+
+        <form method="post">
+            <button name="respuesta" value="real">Es real</button>
+            <button name="respuesta" value="falso">Es falso</button>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+<!-- resultado / puntaje del juego -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado Final</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Resultado Final</h1>
+
+        <p>Puntaje obtenido: <strong>{{ puntaje }} / {{ total }}</strong></p>
+
+        <h2>{{ mensaje }}</h2>
+
+        <a href="/reiniciar">Volver a jugar</a>
+    </div>
+</body>
+</html>

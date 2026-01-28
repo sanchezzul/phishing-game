@@ -1,0 +1,26 @@
+<!-- feedback -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+
+        {% if correcto %}
+            <h2 class="correcto">✅ Correcto</h2>
+        {% else %}
+            <h2 class="incorrecto">❌ Incorrecto</h2>
+        {% endif %}
+
+        <div class="explicacion">
+            <strong>¿Por qué?</strong> {{ explicacion }}
+        </div>
+
+        <a href="/siguiente">Continuar</a>
+    </div>
+</body>
+
+</html>

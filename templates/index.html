@@ -42,10 +42,19 @@ const interval = setInterval(() => {
 
     if (time === 0) {
         clearInterval(interval);
+        
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "respuesta";
+        input.value = "falso";  // por defecto si no responde
+
+        document.getElementById("form").appendChild(input);
         document.getElementById("form").submit();
     }
+
 }, 1000);
 </script>
 
 </body>
 </html>
+

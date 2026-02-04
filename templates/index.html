@@ -7,11 +7,10 @@
 </head>
 <body>
 
-<div class="progress-bar">
-    <div class="progress" style="width: {{ progreso }}%"></div>
-</div>
-
 <div class="correo">
+    <div class="progress-bar">
+        <div class="progress" style="width: {{ progreso }}%"></div>
+    </div>
     <div class="header">
         <img src="{{ url_for('static', filename='mail.png') }}" class="logo">
         <div>
@@ -57,5 +56,6 @@ const interval = setInterval(() => {
 
 </body>
 </html>
+
 
 

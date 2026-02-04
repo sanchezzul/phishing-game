@@ -1,4 +1,3 @@
-<!-- feedback -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,20 +6,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
 
-        {% if correcto %}
-            <h2 class="correcto">✅ Correcto</h2>
-        {% else %}
-            <h2 class="incorrecto">❌ Incorrecto</h2>
-        {% endif %}
+<div class="container">
+    {% if correcto %}
+        <h2 class="correcto">✅ Correcto</h2>
+    {% else %}
+        <h2 class="incorrecto">❌ Incorrecto</h2>
+    {% endif %}
 
-        <div class="explicacion">
-            <strong>¿Por qué?</strong> {{ explicacion }}
-        </div>
+    <p>{{ explicacion }}</p>
 
-        <a href="/siguiente">Continuar</a>
-    </div>
+    <a href="/juego" class="btn continuar">Continuar</a>
+</div>
+
 </body>
-
 </html>

@@ -46,7 +46,7 @@ const interval = setInterval(() => {
         const input = document.createElement("input");
         input.type = "hidden";
         input.name = "respuesta";
-        input.value = "falso";  // por defecto si no responde
+        input.value = "timeout";  // por defecto si no responde
 
         document.getElementById("form").appendChild(input);
         document.getElementById("form").submit();
@@ -57,4 +57,5 @@ const interval = setInterval(() => {
 
 </body>
 </html>
+
 

@@ -1,24 +1,31 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f0f4f8;
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #1d2671, #c33764);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 10px;
 }
 
-.correo {
+.correo, .container {
     background: white;
-    width: 420px;
+    width: 100%;
+    max-width: 420px;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
 }
 
 .header {
     display: flex;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
 }
 
 .logo {
@@ -26,25 +33,41 @@ body {
 }
 
 .asunto {
-    color: #555;
+    color: #666;
     font-size: 14px;
 }
 
 .mensaje {
     margin: 15px 0;
+    line-height: 1.5;
 }
 
 .timer {
+    text-align: center;
     font-weight: bold;
-    margin-bottom: 10px;
+    color: #c33764;
+    margin-bottom: 15px;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .btn {
-    width: 48%;
-    padding: 10px;
+    flex: 1;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-size: 16px;
     cursor: pointer;
+    transition: transform .2s, opacity .2s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 .real {
@@ -57,15 +80,34 @@ body {
     color: white;
 }
 
+.correcto {
+    color: #4CAF50;
+}
+
+.incorrecto {
+    color: #F44336;
+}
+
 .progress-bar {
-    position: absolute;
+    position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    height: 6px;
-    background: #ddd;
+    height: 8px;
+    background: rgba(255,255,255,.3);
 }
 
 .progress {
     height: 100%;
+    background: #00e5ff;
+    transition: width .4s ease;
+}
+
+a.btn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    text-decoration: none;
     background: #2196F3;
+    color: white;
 }

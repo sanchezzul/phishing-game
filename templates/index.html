@@ -2,24 +2,50 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Detecta el Correo Falso</title>
+    <title>Detector de Phishing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Detecta el Correo Falso</h1>
 
-        <p class="progreso">Correo {{ numero }} de {{ total }}</p>
+<div class="progress-bar">
+    <div class="progress" style="width: {{ progreso }}%"></div>
+</div>
 
-        <div class="mensaje">
-            {{ correo.mensaje }}
+<div class="correo">
+    <div class="header">
+        <img src="{{ url_for('static', filename='mail.png') }}" class="logo">
+        <div>
+            <strong>{{ correo.remitente }}</strong><br>
+            <span class="asunto">{{ correo.asunto }}</span>
         </div>
-
-        <form method="post">
-            <button name="respuesta" value="real">Es real</button>
-            <button name="respuesta" value="falso">Es falso</button>
-        </form>
     </div>
-</body>
 
+    <p class="mensaje">{{ correo.mensaje }}</p>
+
+    <div class="timer">
+        ⏱️ Tiempo: <span id="time">10</span>s
+    </div>
+
+    <form method="POST" id="form">
+        <button name="respuesta" value="real" class="btn real">✔ Real</button>
+        <button name="respuesta" value="falso" class="btn falso">✖ Falso</button>
+    </form>
+</div>
+
+<script>
+let time = 10;
+const timer = document.getElementById("time");
+
+const interval = setInterval(() => {
+    time--;
+    timer.textContent = time;
+
+    if (time === 0) {
+        clearInterval(interval);
+        document.getElementById("form").submit();
+    }
+}, 1000);
+</script>
+
+</body>
 </html>

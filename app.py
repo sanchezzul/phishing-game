@@ -1,118 +1,122 @@
 # app.py
 from flask import Flask, render_template, request, session, redirect, url_for
+import random
+import time
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"
 
-correos = [
+CORREOS_BASE = [
     {
-        "mensaje": "Su cuenta será bloqueada. Verifique ahora haciendo clic en este enlace.",
+        "remitente": "Seguridad Bancaria <alerta@banco-falso.com>",
+        "asunto": "⚠️ Acción requerida: cuenta suspendida",
+        "mensaje": "Detectamos actividad sospechosa. Verifique su cuenta inmediatamente.",
         "respuesta": "falso",
-        "explicacion": "Mensaje urgente con enlace sospechoso."
+        "explicacion": "Correo con urgencia, dominio falso y solicitud indirecta de acción."
     },
     {
-        "mensaje": "Adjuntamos la factura correspondiente al mes actual.",
+        "remitente": "Facturación <facturas@empresa.com>",
+        "asunto": "Factura del mes de enero",
+        "mensaje": "Adjuntamos su factura correspondiente al mes actual.",
         "respuesta": "real",
-        "explicacion": "Correo informativo sin presión ni enlaces sospechosos."
+        "explicacion": "Correo informativo, sin enlaces ni presión."
     },
     {
-        "mensaje": "Actualice su contraseña inmediatamente para evitar el cierre de su cuenta.",
+        "remitente": "Soporte Técnico <support@secure-login.net>",
+        "asunto": "Restablezca su contraseña",
+        "mensaje": "Debe actualizar su contraseña para evitar el cierre de su cuenta.",
         "respuesta": "falso",
-        "explicacion": "Uso de amenazas y sensación de urgencia."
+        "explicacion": "Uso de amenaza y dominio sospechoso."
     },
     {
-        "mensaje": "Su pedido ha sido enviado correctamente. Puede revisar el estado en su cuenta oficial.",
+        "remitente": "Tienda Online <ventas@tiendaoficial.com>",
+        "asunto": "📦 Pedido enviado",
+        "mensaje": "Su pedido fue enviado correctamente. Revíselo desde su cuenta.",
         "respuesta": "real",
-        "explicacion": "Mensaje informativo sin solicitar datos personales."
+        "explicacion": "Mensaje esperado, sin solicitud de datos."
     },
     {
-        "mensaje": "Hemos detectado actividad inusual. Ingrese sus datos bancarios para validar su identidad.",
+        "remitente": "Banco Central <info@bc-validacion.com>",
+        "asunto": "Verificación de identidad",
+        "mensaje": "Ingrese sus datos bancarios para validar su identidad.",
         "respuesta": "falso",
-        "explicacion": "Solicitud directa de información sensible, típica de phishing."
+        "explicacion": "Solicitud directa de información sensible."
     }
 ]
 
-# 🔹 Ruta de inicio limpio
-@app.route("/inicio")
+@app.route("/")
 def inicio():
     session.clear()
+    correos = CORREOS_BASE.copy()
+    random.shuffle(correos)
+
+    session["correos"] = correos
     session["indice"] = 0
     session["puntaje"] = 0
-    return redirect(url_for("index"))
 
-# 🔹 Juego principal
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if "indice" not in session or session.get("finalizado"):
-        session.clear()
-        session["indice"] = 0
-        session["puntaje"] = 0
-        session["finalizado"] = False
+    return redirect(url_for("juego"))
 
-    if session["indice"] >= len(correos):
-        session["finalizado"] = True
+@app.route("/juego", methods=["GET", "POST"])
+def juego():
+    indice = session.get("indice", 0)
+    correos = session.get("correos", [])
+
+    if indice >= len(correos):
         return redirect(url_for("resultado"))
-
-    indice = session["indice"]
 
     if request.method == "POST":
         eleccion = request.form["respuesta"]
         correcto = correos[indice]["respuesta"]
 
-        session["es_correcto"] = eleccion == correcto
+        session["correcto"] = eleccion == correcto
         session["explicacion"] = correos[indice]["explicacion"]
 
-        if session["es_correcto"]:
+        if session["correcto"]:
             session["puntaje"] += 1
 
+        session["indice"] += 1
         return redirect(url_for("feedback"))
+
+    session["inicio_tiempo"] = time.time()
 
     return render_template(
         "index.html",
         correo=correos[indice],
         numero=indice + 1,
-        total=len(correos)
+        total=len(correos),
+        progreso=int((indice / len(correos)) * 100)
     )
 
-# 🔹 Pantalla de feedback
 @app.route("/feedback")
 def feedback():
     return render_template(
         "feedback.html",
-        correcto=session.get("es_correcto"),
+        correcto=session.get("correcto"),
         explicacion=session.get("explicacion")
     )
 
-# 🔹 Avanzar pregunta
-@app.route("/siguiente")
-def siguiente():
-    session["indice"] += 1
+@app.route("/resultado")
+def resultado():
+    puntaje = session.get("puntaje", 0)
+    total = len(session.get("correos", []))
 
-    if session["indice"] >= len(correos):
-        puntaje = session["puntaje"]
-        total = len(correos)
+    if puntaje == total:
+        mensaje = "🥇 ¡Experto en detección de phishing!"
+    elif puntaje >= total // 2:
+        mensaje = "🥈 Buen trabajo, pero puedes mejorar"
+    else:
+        mensaje = "🧠 Necesitas reforzar conceptos básicos"
 
-        if puntaje == total:
-            mensaje = "🥇 ¡Experto en detección de phishing!"
-        elif puntaje >= 3:
-            mensaje = "🥈 Buen trabajo, pero ojo con los detalles"
-        else:
-            mensaje = "🧠 Necesitas reforzar conceptos básicos"
+    return render_template(
+        "resultado.html",
+        puntaje=puntaje,
+        total=total,
+        mensaje=mensaje
+    )
 
-        return render_template(
-            "resultado.html",
-            puntaje=puntaje,
-            total=total,
-            mensaje=mensaje
-        )
-
-    return redirect(url_for("index"))
-
-# 🔹 Reiniciar juego
 @app.route("/reiniciar")
 def reiniciar():
     return redirect(url_for("inicio"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
-

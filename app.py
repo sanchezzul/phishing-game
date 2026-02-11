@@ -1,171 +1,111 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-import random
-import time
+import random, time, json, os
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"
 
-# =========================
-# BASE DE CORREOS (10)
-# =========================
+RECORDS_FILE = "records.json"
+
 CORREOS_BASE = [
-    {
-        "remitente": "Seguridad Bancaria <alerta@banco-falso.com>",
-        "asunto": "⚠️ Acción requerida: cuenta suspendida",
-        "mensaje": "Detectamos actividad sospechosa. Verifique su cuenta inmediatamente.",
-        "respuesta": "falso",
-        "explicacion": "Urgencia, dominio falso y solicitud indirecta de acción."
-    },
-    {
-        "remitente": "Facturación <facturas@empresa.com>",
-        "asunto": "Factura del mes de enero",
-        "mensaje": "Adjuntamos su factura correspondiente al mes actual.",
-        "respuesta": "real",
-        "explicacion": "Correo informativo sin enlaces ni presión."
-    },
-    {
-        "remitente": "Soporte Técnico <support@secure-login.net>",
-        "asunto": "Restablezca su contraseña",
-        "mensaje": "Debe actualizar su contraseña para evitar el cierre de su cuenta.",
-        "respuesta": "falso",
-        "explicacion": "Amenaza y dominio sospechoso."
-    },
-    {
-        "remitente": "Tienda Online <ventas@tiendaoficial.com>",
-        "asunto": "📦 Pedido enviado",
-        "mensaje": "Su pedido fue enviado correctamente.",
-        "respuesta": "real",
-        "explicacion": "Mensaje esperado sin solicitud de datos."
-    },
-    {
-        "remitente": "Banco Central <info@bc-validacion.com>",
-        "asunto": "Verificación de identidad",
-        "mensaje": "Ingrese sus datos bancarios para validar su identidad.",
-        "respuesta": "falso",
-        "explicacion": "Solicitud directa de información sensible."
-    },
-    {
-        "remitente": "PayPal <service@paypal-verificacion.com>",
-        "asunto": "Actividad inusual detectada",
-        "mensaje": "Confirme su información para evitar la suspensión.",
-        "respuesta": "falso",
-        "explicacion": "Dominio falso y solicitud de datos."
-    },
-    {
-        "remitente": "Universidad <notificaciones@utp.ac.pa>",
-        "asunto": "Publicación de calificaciones",
-        "mensaje": "Las notas del semestre ya están disponibles.",
-        "respuesta": "real",
-        "explicacion": "Correo institucional legítimo."
-    },
-    {
-        "remitente": "Netflix <info@netflix.com>",
-        "asunto": "Problema con tu método de pago",
-        "mensaje": "No pudimos procesar tu último pago.",
-        "respuesta": "real",
-        "explicacion": "Dominio legítimo y mensaje habitual."
-    },
-    {
-        "remitente": "Soporte Microsoft <secure@microsoft-check.net>",
-        "asunto": "Cuenta comprometida",
-        "mensaje": "Inicie sesión para asegurar su cuenta.",
-        "respuesta": "falso",
-        "explicacion": "Dominio falso y mensaje alarmista."
-    },
-    {
-        "remitente": "Amazon <orders@amazon.com>",
-        "asunto": "Confirmación de pedido",
-        "mensaje": "Gracias por su compra. Consulte los detalles en su cuenta.",
-        "respuesta": "real",
-        "explicacion": "Correo esperado sin solicitud de datos."
-    }
+    {"remitente":"Seguridad <alerta@banco-falso.com>","asunto":"⚠️ Cuenta suspendida","mensaje":"Verifique su cuenta ahora.","respuesta":"falso","explicacion":"Urgencia y dominio falso."},
+    {"remitente":"Facturación <facturas@empresa.com>","asunto":"Factura","mensaje":"Adjuntamos su factura.","respuesta":"real","explicacion":"Correo informativo."},
+    {"remitente":"Soporte <support@secure-login.net>","asunto":"Contraseña","mensaje":"Actualice su contraseña.","respuesta":"falso","explicacion":"Amenaza."},
+    {"remitente":"Tienda <ventas@tienda.com>","asunto":"Pedido enviado","mensaje":"Su pedido fue enviado.","respuesta":"real","explicacion":"Mensaje legítimo."},
+    {"remitente":"Banco <info@bc-validacion.com>","asunto":"Verificación","mensaje":"Ingrese sus datos bancarios.","respuesta":"falso","explicacion":"Solicitud de datos sensibles."},
+    {"remitente":"PayPal <service@paypal-check.com>","asunto":"Actividad inusual","mensaje":"Confirme su información.","respuesta":"falso","explicacion":"Dominio falso."},
+    {"remitente":"Universidad <notificaciones@utp.ac.pa>","asunto":"Notas","mensaje":"Notas publicadas.","respuesta":"real","explicacion":"Correo institucional."},
+    {"remitente":"Netflix <info@netflix.com>","asunto":"Pago rechazado","mensaje":"No se procesó su pago.","respuesta":"real","explicacion":"Mensaje habitual."},
+    {"remitente":"Microsoft <secure@microsoft-check.net>","asunto":"Cuenta comprometida","mensaje":"Inicie sesión.","respuesta":"falso","explicacion":"Dominio falso."},
+    {"remitente":"Amazon <orders@amazon.com>","asunto":"Confirmación","mensaje":"Gracias por su compra.","respuesta":"real","explicacion":"Correo legítimo."}
 ]
 
-# =========================
-# RUTAS
-# =========================
+def load_records():
+    if not os.path.exists(RECORDS_FILE):
+        return []
+    with open(RECORDS_FILE, "r") as f:
+        return json.load(f)
+
+def save_record(score, time_spent):
+    records = load_records()
+    records.append({"puntaje": score, "tiempo": time_spent})
+    records = sorted(records, key=lambda x: (-x["puntaje"], x["tiempo"]))[:5]
+    with open(RECORDS_FILE, "w") as f:
+        json.dump(records, f, indent=2)
 
 @app.route("/")
-def inicio():
+def start():
     session.clear()
+    return render_template("start.html")
+
+@app.route("/inicio")
+def inicio():
     correos = CORREOS_BASE.copy()
     random.shuffle(correos)
-
     session["correos"] = correos
     session["indice"] = 0
     session["puntaje"] = 0
-
+    session["fallos"] = 0
+    session["inicio_tiempo"] = time.time()
     return redirect(url_for("juego"))
-
 
 @app.route("/juego", methods=["GET", "POST"])
 def juego():
-    indice = session.get("indice", 0)
-    correos = session.get("correos", [])
+    correos = session["correos"]
+    i = session["indice"]
 
-    if indice >= len(correos):
+    if i >= len(correos):
         return redirect(url_for("resultado"))
 
     if request.method == "POST":
         eleccion = request.form.get("respuesta")
-        correcto = correos[indice]["respuesta"]
+        correcto = correos[i]["respuesta"]
+        session["es_phishing"] = correos[i]["respuesta"] == "falso"
 
-        # ⏱️ Si se acaba el tiempo
         if eleccion == "timeout":
+            session["fallos"] += 1
             session["correcto"] = False
-            session["explicacion"] = "⏱️ Tiempo agotado. No se suman puntos."
+            session["explicacion"] = "⏱️ Tiempo agotado."
         else:
             session["correcto"] = eleccion == correcto
-            session["explicacion"] = correos[indice]["explicacion"]
+            session["explicacion"] = correos[i]["explicacion"]
 
             if session["correcto"]:
-                session["puntaje"] += 1
+                session["puntaje"] += 5
+            else:
+                session["fallos"] += 1
 
         session["indice"] += 1
+
+        if session["fallos"] >= 3:
+            return redirect(url_for("resultado"))
+
         return redirect(url_for("feedback"))
 
-    return render_template(
-        "index.html",
-        correo=correos[indice],
-        numero=indice + 1,
-        total=len(correos),
-        progreso=int(((indice + 1) / len(correos)) * 100)
-    )
-
+    progreso = int((i / len(correos)) * 100)
+    return render_template("index.html", correo=correos[i], progreso=progreso)
 
 @app.route("/feedback")
 def feedback():
-    return render_template(
-        "feedback.html",
-        correcto=session.get("correcto"),
-        explicacion=session.get("explicacion")
+    return render_template("feedback.html",
+        correcto=session["correcto"],
+        explicacion=session["explicacion"],
+        es_phishing=session["es_phishing"]
     )
-
 
 @app.route("/resultado")
 def resultado():
-    puntaje = session.get("puntaje", 0)
-    total = len(session.get("correos", []))
+    total_time = int(time.time() - session["inicio_tiempo"])
+    puntaje = session["puntaje"]
 
-    if puntaje == total:
-        mensaje = "🥇 ¡Experto en detección de phishing!"
-    elif puntaje >= total // 2:
-        mensaje = "🥈 Buen trabajo, pero puedes mejorar"
-    else:
-        mensaje = "🧠 Necesitas reforzar conceptos básicos"
+    if session["fallos"] < 3:
+        save_record(puntaje, total_time)
 
-    return render_template(
-        "resultado.html",
+    records = load_records()
+    return render_template("resultado.html",
         puntaje=puntaje,
-        total=total,
-        mensaje=mensaje
+        tiempo=total_time,
+        records=records
     )
 
-
-@app.route("/reiniciar")
-def reiniciar():
-    return redirect(url_for("inicio"))
-
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(debug=True)

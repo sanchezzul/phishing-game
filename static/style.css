@@ -1,27 +1,36 @@
-* {
+{
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #1d2671, #c33764);
+    background: url("/static/bg-phishing.gif") center/cover fixed;
+}
+
+/* CAPA OSCURA + BLUR */
+.overlay {
+    backdrop-filter: blur(6px);
+    /*background: rgba(0,0,0,0.4);*/
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding: 15px;
 }
 
+/* TARJETAS */
 .correo, .container {
     background: white;
     width: 100%;
     max-width: 420px;
-    padding: 20px;
+    padding: 25px;
     border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    animation: fadeIn .4s ease-in-out;
 }
 
+/* HEADER CORREO */
 .header {
     display: flex;
     align-items: center;
@@ -42,19 +51,22 @@ body {
     line-height: 1.5;
 }
 
+/* TEMPORIZADOR */
 .timer {
     text-align: center;
     font-weight: bold;
     color: #c33764;
-    margin-bottom: 15px;
+    margin: 10px 0 15px 0;
+    font-size: 18px;
 }
 
+/* FORM BOTONES */
 form {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
 }
 
+/* BOTONES */
 .btn {
     flex: 1;
     padding: 12px;
@@ -62,7 +74,8 @@ form {
     border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
-    transition: transform .2s, opacity .2s;
+    transition: all .2s ease;
+    color: white;
 }
 
 .btn:hover {
@@ -72,35 +85,10 @@ form {
 
 .real {
     background: #4CAF50;
-    color: white;
 }
 
 .falso {
     background: #F44336;
-    color: white;
-}
-
-.correcto {
-    color: #4CAF50;
-}
-
-.incorrecto {
-    color: #F44336;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e0e0e0;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    overflow: hidden;
-}
-
-.progress {
-    height: 100%;
-    background: linear-gradient(90deg, #00e5ff, #2196F3);
-    transition: width .4s ease;
 }
 
 a.btn {
@@ -109,6 +97,79 @@ a.btn {
     margin-top: 15px;
     text-decoration: none;
     background: #2196F3;
-    color: white;
 }
 
+/* FEEDBACK */
+.correcto {
+    color: #4CAF50;
+    text-align: center;
+}
+
+.incorrecto {
+    color: #F44336;
+    text-align: center;
+}
+
+.img-feedback {
+    width: 180px;
+    display: block;
+    margin: 15px auto;
+}
+
+/* BARRA DE PROGRESO MODERNA */
+.progress-container {
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 22px;
+    background: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00e5ff, #2196F3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width .4s ease;
+}
+
+.progress span {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* RESULTADO FINAL */
+.resultado-container {
+    text-align: center;
+}
+
+.img-resultado {
+    max-width: 250px;
+    width: 100%;
+    margin: 15px auto;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .correo, .container {
+        padding: 18px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

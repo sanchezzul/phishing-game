@@ -1,62 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Detector de Phishing</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<title>Juego</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="overlay">
 
 <div class="correo">
-    <div class="progress-bar">
-        <div class="progress" style="width: {{ progreso }}%"></div>
-    </div>
-    <div class="header">
-        <img src="{{ url_for('static', filename='mail.png') }}" class="logo">
-        <div>
-            <strong>{{ correo.remitente }}</strong><br>
-            <span class="asunto">{{ correo.asunto }}</span>
-        </div>
-    </div>
+<div class="progress-bar"><div class="progress" style="width:{{ progreso }}%"></div></div>
 
-    <p class="mensaje">{{ correo.mensaje }}</p>
+<div class="header">
+<img src="{{ url_for('static', filename='mail.png') }}" class="logo">
+<strong>{{ correo.remitente }}</strong>
+</div>
 
-    <div class="timer">
-        ⏱️ Tiempo: <span id="time">10</span>s
-    </div>
+<h4>{{ correo.asunto }}</h4>
+<p>{{ correo.mensaje }}</p>
 
-    <form method="POST" id="form">
-        <button name="respuesta" value="real" class="btn real">✔ Real</button>
-        <button name="respuesta" value="falso" class="btn falso">✖ Falso</button>
-    </form>
+<div class="timer">⏱️ <span id="time">10</span>s</div>
+
+<form method="POST" id="form">
+<button class="btn real" name="respuesta" value="real">✔ Real</button>
+<button class="btn falso" name="respuesta" value="falso">✖ Falso</button>
+</form>
 </div>
 
 <script>
-let time = 10;
-const timer = document.getElementById("time");
-
-const interval = setInterval(() => {
-    time--;
-    timer.textContent = time;
-
-    if (time === 0) {
-        clearInterval(interval);
-        
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "respuesta";
-        input.value = "timeout";  
-
-        document.getElementById("form").appendChild(input);
-        document.getElementById("form").submit();
-    }
-
-}, 1000);
+let t=10;
+let s=document.getElementById("time");
+let i=setInterval(()=>{
+t--;s.textContent=t;
+if(t<=0){
+clearInterval(i);
+let h=document.createElement("input");
+h.type="hidden";h.name="respuesta";h.value="timeout";
+document.getElementById("form").appendChild(h);
+document.getElementById("form").submit();
+}},1000);
 </script>
 
 </body>
 </html>
-
-
-
-

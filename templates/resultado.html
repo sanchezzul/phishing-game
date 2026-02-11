@@ -2,18 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Resultado Final</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="overlay">
 
-<div class="container">
-    <h1>Resultado Final</h1>
-    <p>Puntaje: <strong>{{ puntaje }} / {{ total }}</strong></p>
-    <h2>{{ mensaje }}</h2>
+    <div class="container">
+        <h1>🏁 Resultado</h1>
+        <p>Puntaje: <b>{{ puntaje }}</b></p>
+        <p>Tiempo: <b>{{ tiempo }}s</b></p>
 
-    <a href="/reiniciar" class="btn">🔁 Jugar otra vez</a>
-</div>
+        <h3>🏆 Top 5</h3>
+        <ol>
+            {% for r in records %}
+                <li>{{ r.puntaje }} pts – {{ r.tiempo }}s</li>
+            {% endfor %}
+        </ol>
+
+        <a href="/" class="btn">🔁 Volver</a>
+    </div>
 
 </body>
 </html>

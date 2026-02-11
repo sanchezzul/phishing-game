@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Resultado</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="overlay">
+
+{% if correcto %}
+<audio autoplay src="{{ url_for('static', filename='ok.mp3') }}"></audio>
+{% else %}
+<audio autoplay src="{{ url_for('static', filename='error.mp3') }}"></audio>
+{% endif %}
 
 <div class="container">
+{% if es_phishing %}
+    {% if correcto %}
+        <h2 class="correcto">🕵️ ¡Atrapaste al Phisher!</h2>
+        <img src="{{ url_for('static', filename='correcto.jpg') }}" class="img-feedback">
+    {% else %}
+        <h2 class="incorrecto">😱 ¡Te han robado!</h2>
+        <img src="{{ url_for('static', filename='incorrecto.png') }}" class="img-feedback">
+    {% endif %}
+{% else %}
     {% if correcto %}
         <h2 class="correcto">✅ Correcto</h2>
     {% else %}
         <h2 class="incorrecto">❌ Incorrecto</h2>
     {% endif %}
+{% endif %}
 
-    <p>{{ explicacion }}</p>
-
-    <a href="/juego" class="btn continuar">Continuar</a>
+<p>{{ explicacion }}</p>
+<a href="/juego" class="btn">Continuar</a>
 </div>
 
 </body>

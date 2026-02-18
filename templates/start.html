@@ -6,15 +6,36 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="overlay">
+	<div id="rotate-warning">
+    <div class="rotate-box">
+        <img src="{{ url_for('static', filename='rotar.png') }}" alt="Gira el celular">
+        <h2>Gira tu celular</h2>
+        <p>Para una mejor experiencia, usa el modo horizontal</p>
+    </div>
+</div>
 
 <div class="container">
+	<div class="rotate-warning">Gira tu celular para una mejor experiencia</div>
 <h1>Detector de Phishing</h1>
+<img src="{{ url_for('static', filename='detective.png') }}" class="img-feedback">
 <ul>
 <li>10 segundos por correo</li>
-<li>5 puntos por acierto</li>
+<li>5 puntos por cada acierto</li>
 <li>3 errores = GAME OVER</li>
 </ul>
-<a href="/inicio" class="btn start">▶️ Comenzar</a>
+<!--<p>Ingresa tu nombre para comenzar</p>-->
+
+	<form method="POST" action="/inicio" class="start-form">
+	    <label class="name-label">Ingresa tu nombre</label>
+
+	    <input type="text" name="nombre" placeholder="Tu nombre"
+	           class="name-input" required maxlength="15">
+
+	    <button type="submit" class="btn start">Comenzar</button>
+	</form>
+
+
+
 </div>
 
 </body>

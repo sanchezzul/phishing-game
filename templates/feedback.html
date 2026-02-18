@@ -10,6 +10,11 @@
 <audio autoplay src="{{ url_for('static', filename='ok.mp3') }}"></audio>
 {% else %}
 <audio autoplay src="{{ url_for('static', filename='error.mp3') }}"></audio>
+<script>
+if (navigator.vibrate) {
+    navigator.vibrate(300);
+}
+</script>
 {% endif %}
 
 <div class="container">

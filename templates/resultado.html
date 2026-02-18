@@ -7,16 +7,30 @@
 <body class="overlay">
 
     <div class="container">
-        <h1>🏁 Resultado</h1>
+        <h1 style="color:#0080FF">🏁 Resultado</h1>
+        <h2>Jugador: {{ nombre }}</h2>
         <p>Puntaje: <b>{{ puntaje }}</b></p>
         <p>Tiempo: <b>{{ tiempo }}s</b></p>
+
+        {% if session.fallos >= 3 %}
+            <img src="{{ url_for('static', filename='game-over.png') }}" class="img-resultado">
+            <!--*<h2 style="color:#F44336">GAME OVER</h2>-->
+        {% else %}
+            <img src="{{ url_for('static', filename='victoria.png') }}" class="img-resultado">
+        {% endif %}
+
 
         <h3>🏆 Top 5</h3>
         <ol>
             {% for r in records %}
-                <li>{{ r.puntaje }} pts – {{ r.tiempo }}s</li>
+
+                <li class="{% if r.nombre == nombre %}top-nuevo{% endif %}">
+                    {{ r.nombre }} — {{ r.puntaje }} pts — {{ r.tiempo }} s
+                </li>
             {% endfor %}
         </ol>
+
+
 
         <a href="/" class="btn">🔁 Volver</a>
     </div>

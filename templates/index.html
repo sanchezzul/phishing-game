@@ -8,12 +8,29 @@
 <body class="overlay">
 
 <div class="correo">
+
+<div class="vidas">
+    {% for i in range(3) %}
+        {% if i < (3 - session.fallos) %}
+            <span class="corazon lleno">❤️</span>
+        {% else %}
+            <span class="corazon vacio">🤍</span>
+        {% endif %}
+    {% endfor %}
+</div>
+
 <div class="progress-bar"><div class="progress" style="width:{{ progreso }}%"></div></div>
 
 <div class="header">
 <img src="{{ url_for('static', filename='mail.png') }}" class="logo">
 <strong>{{ correo.remitente }}</strong>
 </div>
+
+<button type="button" class="btn" style="background:#ff9800"
+onclick="alert('Revisa el dominio y el tono del mensaje')">
+💡 Ver pista
+</button>
+
 
 <h4>{{ correo.asunto }}</h4>
 <p>{{ correo.mensaje }}</p>
@@ -25,6 +42,8 @@
 <button class="btn falso" name="respuesta" value="falso">✖ Falso</button>
 </form>
 </div>
+
+
 
 <script>
 let t=10;

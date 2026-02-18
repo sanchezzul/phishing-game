@@ -25,28 +25,48 @@ def load_records():
     with open(RECORDS_FILE, "r") as f:
         return json.load(f)
 
-def save_record(score, time_spent):
+def save_record(nombre, score, time_spent):
     records = load_records()
-    records.append({"puntaje": score, "tiempo": time_spent})
-    records = sorted(records, key=lambda x: (-x["puntaje"], x["tiempo"]))[:5]
+
+    records.append({
+        "nombre": nombre,
+        "puntaje": score,
+        "tiempo": time_spent
+    })
+
+    records = sorted(
+        records,
+        key=lambda x: (-x["puntaje"], x["tiempo"])
+    )[:5]
+
     with open(RECORDS_FILE, "w") as f:
         json.dump(records, f, indent=2)
+
 
 @app.route("/")
 def start():
     session.clear()
     return render_template("start.html")
 
-@app.route("/inicio")
+
+@app.route("/inicio", methods=["POST"])
 def inicio():
-    correos = CORREOS_BASE.copy()
-    random.shuffle(correos)
-    session["correos"] = correos
+    session.clear()
+
+    # guarda el nombre del jugador
+    session["nombre"] = request.form.get("nombre", "Jugador").strip() or "Jugador"
+
     session["indice"] = 0
     session["puntaje"] = 0
     session["fallos"] = 0
     session["inicio_tiempo"] = time.time()
+
+    correos = CORREOS_BASE.copy()
+    random.shuffle(correos)
+    session["correos"] = correos
+
     return redirect(url_for("juego"))
+
 
 @app.route("/juego", methods=["GET", "POST"])
 def juego():
@@ -92,20 +112,44 @@ def feedback():
         es_phishing=session["es_phishing"]
     )
 
+
 @app.route("/resultado")
 def resultado():
-    total_time = int(time.time() - session["inicio_tiempo"])
-    puntaje = session["puntaje"]
-
-    if session["fallos"] < 3:
-        save_record(puntaje, total_time)
+    nombre = session.get("nombre", "Jugador")
+    puntaje = session.get("puntaje", 0)
+    fallos = session.get("fallos", 3)
+    total_time = int(time.time() - session.get("inicio_tiempo", time.time()))
 
     records = load_records()
-    return render_template("resultado.html",
+    nuevo = False
+
+    # SOLO guarda récord si NO perdió por las 3 vidas
+    if fallos < 3:
+        save_record(nombre, puntaje, total_time)
+        records = load_records()
+
+        # Verificar si este jugador entró al Top 5
+        for r in records:
+            if (
+                r.get("nombre") == nombre and
+                r.get("puntaje") == puntaje and
+                r.get("tiempo") == total_time
+            ):
+                nuevo = True
+                break
+
+    # Orden final (por seguridad)
+    records.sort(key=lambda x: (-x["puntaje"], x["tiempo"]))
+
+    return render_template(
+        "resultado.html",
+        nombre=nombre,
         puntaje=puntaje,
         tiempo=total_time,
-        records=records
+        records=records,
+        nuevo=nuevo
     )
 
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -1,0 +1,388 @@
+{
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: url("/static/bg-phishing.gif") center/cover fixed;
+}
+
+/* CAPA OSCURA + BLUR */
+.overlay {
+    backdrop-filter: blur(6px);
+    /*background: rgba(0,0,0,0.4);*/
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+/* TARJETAS */
+.correo, .container {
+    background: white;
+    width: 100%;
+    max-width: 600px;   
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    animation: fadeIn .4s ease-in-out;
+}
+
+
+
+
+/* HEADER CORREO */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    width: 40px;
+}
+
+.asunto {
+    color: #666;
+    font-size: 14px;
+}
+
+/*.mensaje {
+    margin: 15px 0;
+    line-height: 1.5;
+}*/
+.mensaje, p {
+    margin: 15px 0;
+    line-height: 1.7;
+    font-size: 17px;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+/* TEMPORIZADOR */
+.timer {
+    text-align: center;
+    font-weight: bold;
+    color: #c33764;
+    margin: 10px 0 15px 0;
+    font-size: 18px;
+}
+
+/* FORM BOTONES */
+form {
+    display: flex;
+    gap: 10px;
+}
+
+/* BOTONES */
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+    color: white;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.real {
+    background: #4CAF50;
+}
+
+.falso {
+    background: #F44336;
+}
+
+a.btn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    text-decoration: none;
+    background: #2196F3;
+}
+
+/* FEEDBACK */
+.correcto {
+    color: #4CAF50;
+    text-align: center;
+}
+
+.incorrecto {
+    color: #F44336;
+    text-align: center;
+}
+
+.img-feedback,
+.img-resultado {
+    display: block;
+    margin: 20px auto;
+    max-width: 220px;
+    width: 100%;
+}
+
+
+/* BARRA DE PROGRESO MODERNA */
+.progress-container {
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 22px;
+    background: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00e5ff, #2196F3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width .4s ease;
+}
+
+.progress span {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* RESULTADO FINAL */
+.resultado-container {
+    text-align: center;
+}
+
+.img-resultado {
+    max-width: 250px;
+    width: 100%;
+    margin: 15px auto;
+}
+
+.rotate-warning {
+    display: none;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Celular vertical */
+@media (max-width: 768px) and (orientation: portrait) {
+    .rotate-warning {
+        display: block;
+    }
+
+    .correo, .container {
+        max-width: 95%;
+    }
+}
+
+/* VIDAS */
+.vidas {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.corazon {
+    margin: 0 4px;
+}
+
+.corazon.vacio {
+    opacity: 0.3;
+}
+
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .correo, .container {
+        padding: 18px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+.top-nuevo {
+    color: #F44336;
+    font-weight: bold;
+    background: rgba(244, 67, 54, 0.1);
+    padding: 6px;
+    border-radius: 8px;
+}
+
+/* CAJA NOMBRE */
+.name-box {
+    margin: 15px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.name-box label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+/* INPUT */
+.name-box input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: all 0.25s ease;
+    background: #f9f9f9;
+}
+
+/* EFECTO AL HACER CLICK */
+.name-box input:focus {
+    border-color: #2196F3;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(33,150,243,0.15);
+}
+
+/* PLACEHOLDER */
+.name-box input::placeholder {
+    color: #aaa;
+}
+
+/* ERROR (opcional si luego validas) */
+.name-box input:invalid {
+    border-color: #f44336;
+}
+
+/* FORMULARIO START */
+..start-form {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;      
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+
+/* LABEL */
+.name-label {
+    font-weight: bold;
+    color: #333;
+    text-align: left;
+}
+
+/* INPUT NOMBRE */
+.name-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 14px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: all .25s ease;
+}
+
+.name-input:focus {
+    border-color: #2196F3;
+    box-shadow: 0 0 0 3px rgba(33,150,243,.2);
+}
+
+/* BOTÓN COMENZAR */
+.btn.start {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #00e5ff, #2196F3);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all .25s ease;
+    box-shadow: 0 10px 25px rgba(33,150,243,.45);
+}
+
+.btn.start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(33,150,243,.6);
+}
+
+.btn.start:active {
+    transform: scale(0.97);
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .btn.start {
+        font-size: 16px;
+        padding: 13px;
+    }
+}
+
+/* BLOQUEO POR ORIENTACIÓN */
+#rotate-warning {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.rotate-box {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 320px;
+    animation: fadeIn .4s ease-in-out;
+}
+
+.rotate-box img {
+    width: 120px;
+    margin-bottom: 15px;
+}
+
+.rotate-box h2 {
+    margin: 10px 0;
+    color: #c33764;
+}
+
+.rotate-box p {
+    color: #555;
+    font-size: 15px;
+}
+
+/* SOLO PARA CELULARES */
+@media (max-width: 768px) and (orientation: portrait) {
+    #rotate-warning {
+        display: flex;
+    }
+
+    body > *:not(#rotate-warning) {
+        filter: blur(4px);
+        pointer-events: none;
+        user-select: none;
+    }
+}
